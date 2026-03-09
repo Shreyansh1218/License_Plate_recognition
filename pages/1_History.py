@@ -22,10 +22,18 @@ st.markdown("---")
 data = fetch_history()
 
 if data:
-    df = pd.DataFrame(
-        data,
-        columns=["Plate Number", "Confidence", "Timestamp"]
-    )
+    # Handle case where database returns 4 columns (ID included)
+    if len(data[0]) == 4:
+        df = pd.DataFrame(
+            data,
+            columns=["ID", "Plate Number", "Confidence", "Timestamp"]
+        )
+        df = df.drop(columns=["ID"])
+    else:
+        df = pd.DataFrame(
+            data,
+            columns=["Plate Number", "Confidence", "Timestamp"]
+        )
 
     # -------------------------------
     # ACTION BUTTONS
