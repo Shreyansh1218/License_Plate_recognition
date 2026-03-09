@@ -24,14 +24,25 @@ if not data:
     st.stop()
 
 # -------------------------------
+# -------------------------------
 # CREATE DATAFRAME
 # -------------------------------
-df = pd.DataFrame(
-    data,
-    columns=["Plate Number", "Confidence", "Timestamp"]
-)
+if len(data[0]) == 4:
+    df = pd.DataFrame(
+        data,
+        columns=["ID", "Plate Number", "Timestamp", "Confidence"]
+    )
+    df = df.drop(columns=["ID"])
+else:
+    df = pd.DataFrame(
+        data,
+        columns=["Plate Number", "Timestamp", "Confidence"]
+    )
 
+# Fix data types
+df["Confidence"] = pd.to_numeric(df["Confidence"], errors="coerce")
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+
 df["Date"] = df["Timestamp"].dt.date
 
 # -------------------------------
@@ -70,6 +81,7 @@ top_plates = (
     .head(5)
     .reset_index()
 )
+
 top_plates.columns = ["Plate Number", "Count"]
 
 st.dataframe(top_plates, use_container_width=True)
